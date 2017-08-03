@@ -11,7 +11,7 @@ border.convert = function(a){
 
 convert.1jpg = function(a){
   nnn = dim(a)
-  b = array(NA, dim = c(nnn[1]-1, nnn[2]-1,3))
+  b = array(NA, dim = c(nnn[1]-1, nnn[2]-1, 3))
   b[,,1] = border.convert(a[,,1])
   b[,,2] = border.convert(a[,,2])
   b[,,3] = border.convert(a[,,3])
@@ -43,6 +43,7 @@ get.result = function(file, result.csv){
   result.csv$final[which(result.csv$name == file)]
 }
 
+# gather iamge -------------------------------
 read.and.gather = function(folderPath, result){
   needs(jpeg)
   all.files = list.files(folderPath)
@@ -68,7 +69,40 @@ read.and.gather = function(folderPath, result){
   finished = 1
   return(notes)
 }
+
+# convolution filter -------------------------------
+unit.convolute = function(unitMatrix){
+  max(unitMatrix)
+}
+
+convolute = function(singleMatrix, size = 10, stride = 5){
+  mn = dim(singleMatrix)
+  m = floor((mn[1] - size) / stride) + 1
+  m_res = mn[1] -(size + (m-1) * stride)
+  n = floor((mn[2] - size) / stride) + 1 
+  n_res = mn[2] -(size + (n-1) * stride)
+  
+  newMatrix = matrix(rep(NA, m*n), nrow = m)
+  #pb = txtProgressBar(max = m*n)
+  ttt = 0
+  for(i in 1:m){
+    for(j in 1:n){
+      unitMatrix = singleMatrix[(1+(i-1)*stride):(size + (i-1)*stride), (1+(j-1)*stride):(size + (j-1)*stride)]
+      newMatrix[i,j] = unit.convolute(unitMatrix = unitMatrix)
+      ttt = ttt + 1
+      #setTxtProgressBar(pb, ttt)
+    }
+  }
+  #close(pb)
+  
+  return(newMatrix)
+}
+
+# b = ddd %>%
+#   shrink.3color() %>%
+#   convolute()
+
 #---------------------------
-#ddd = readJPEG("./homework_data/airplanes/Test/image_0013.jpg")
+#ddd = readJPEG("./homework_data/airplanes/Test/image_0049.jpg")
 
 
