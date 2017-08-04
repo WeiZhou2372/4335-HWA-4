@@ -3,9 +3,8 @@ source("FUN.logistic.r")
 result = read.csv("Leopards_data.csv")
 
 # config ---------------------
-convo.size = 15
+convo.size = 20
 convo.stride = 10
-cat("\014")
 # train ----------------------
 train = read.convolute.and.gather("./homework_data/Leopards/Train", result, size = convo.size, stride = convo.stride)
 train.actual.y = train[,dim(train)[2]] %>% as.numeric()

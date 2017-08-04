@@ -1,7 +1,13 @@
 needs(jpeg, biglm, dplyr)
-
+#' filepath %>%           # string
+#' readJPG() %>%          # array: [m,n,3]
+#' convert.1jpg() %>%     # array:[m-1, n-1, 3] # color difference
+#' shrink.3color() %>%    # matrix: [m-1, n-1]
+#' convolute() %>%        # matrix: [?,?]
+#' as.vector()            # vector: [?]
 
 border.convert = function(a){
+  # color -> color difference
   bb1 = a %>% apply(1, diff) %>% abs()
   bb2 = a %>% apply(2, diff) %>% abs()
   frame = (bb2[,-1] + t(bb1)[-1, ])/2
@@ -75,7 +81,7 @@ unit.convolute = function(unitMatrix){
   max(unitMatrix)
 }
 
-convolute = function(singleMatrix, size = 10, stride = 5){
+convolute = function(singleMatrix, size, stride){
   mn = dim(singleMatrix)
   m = floor((mn[1] - size) / stride) + 1
   m_res = mn[1] -(size + (m-1) * stride)
@@ -98,11 +104,24 @@ convolute = function(singleMatrix, size = 10, stride = 5){
   return(newMatrix)
 }
 
+# main function from jpg to convoluted one, and to vector
+jpg.diff.shrink.convolute.vector = function(x, convo.size, convo.stride){
+  convert.1jpg(x) %>%     # array:[m-1, n-1, 3] # color difference
+    shrink.3color() %>%    # matrix: [m-1, n-1]
+    convolute(convo.size, convo.stride) %>%  # matrix: [?,?]
+    as.vector()           # vector: [?]
+}
 # b = ddd %>%
 #   shrink.3color() %>%
 #   convolute()
 
+convolute.size.check = function(x,y,size,stride){
+  a = floor(((x-1)-size)/stride) + 1
+  b = floor(((y-1)-size)/stride) + 1
+  return(a * b)
+}
+
 #---------------------------
-#ddd = readJPEG("./homework_data/airplanes/Test/image_0049.jpg")
+#ddd = readJPEG("./homework_data/Bonsai/Train/image_0052.jpg")
 
 
