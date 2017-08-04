@@ -50,7 +50,7 @@ get.result = function(file, result.csv){
 }
 
 # gather iamge -------------------------------
-read.and.gather = function(folderPath, result){
+read.and.gather = function(folderPath, result){ # no convolution
   needs(jpeg)
   all.files = list.files(folderPath)
   finished = 0
@@ -115,10 +115,38 @@ jpg.diff.shrink.convolute.vector = function(x, convo.size, convo.stride){
 #   shrink.3color() %>%
 #   convolute()
 
+
 convolute.size.check = function(x,y,size,stride){
   a = floor(((x-1)-size)/stride) + 1
   b = floor(((y-1)-size)/stride) + 1
   return(a * b)
+}
+
+gather.folder.convolute = function(folderPath, convo.size, convo.stride, result){
+  needs(jpeg)
+  message(folderPath)
+  all.files = list.files(folderPath)
+  a = dim(readJPEG(paste0(folderPath, "/", all.files[1])))
+  len = convolute.size.check(a[1], a[2], convo.size, convo.stride)
+  
+  notes = matrix(NA, nrow = length(all.files), ncol = len)
+  actual.y = rep(NA, length(all.files))
+  i = 1
+  print(length(all.files))
+  pb = txtProgressBar(max = length(all.files) - 1)
+  for(file in all.files){
+    b = readJPEG(paste0(folderPath, "/", file))
+    notes[i,] = jpg.diff.shrink.convolute.vector(b, convo.size, convo.stride)
+    
+    actual.y[i] = get.result(file, result)[1]
+    
+    setTxtProgressBar(pb, i)
+    i = i + 1
+  }
+  close(pb)
+  
+  return(list(x = notes,
+              actual.y = actual.y))
 }
 
 #---------------------------
