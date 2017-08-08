@@ -1,5 +1,5 @@
 source("FUN.general.r")
-
+needs(fastAdaboost)
 # first obeservation ----------------
 # input: a convoluted vector[?]
 

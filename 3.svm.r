@@ -2,7 +2,7 @@ source("FUN.svm.r")
 # config ---------------------------------------
 cates = c("airplanes", "Bonsai", "Faces", "Leopards", "Motorbikes")
 
-category = cates[4]
+category = cates[2]
 convo.size = 15
 convo.stride = 5
 
